@@ -1,714 +1,885 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Recruitment Pipeline</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>AI Recruitment System</title>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-          colors: {
-            brand: { DEFAULT: '#7c3aed', light: '#8b5cf6', dark: '#6d28d9', faint: '#ede9fe' },
-            surface: { 0: '#09090b', 1: '#18181b', 2: '#27272a', 3: '#3f3f46' },
-          },
-        },
-      },
-    }
-  </script>
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      font-size: 15px;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #2d3748;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .header-left h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .header-left .subtitle {
+      margin: 0.2rem 0 0;
+      font-size: 0.8rem;
+      opacity: 0.75;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: #68d391;
+      font-weight: 500;
+    }
+    .live-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #68d391;
+    }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .card h2 {
+      margin: 0 0 1.1rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1a202c;
+    }
+
+    /* ── Form ── */
+    .config-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .field label,
+    .field-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .field input[type=text],
+    .field input[type=number] {
+      padding: 0.45rem 0.75rem;
+      font-size: 0.9rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color .15s;
+      background: #fff;
+      color: #1a202c;
+    }
+    .field input:focus {
+      border-color: #805ad5;
+      box-shadow: 0 0 0 2px rgba(128,90,213,.15);
+    }
+    .field-cutoff input { width: 130px; }
+    .field-stage  input { width: 200px; }
+
+    /* Skip checkboxes */
+    .skip-group {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-bottom: 0.15rem;
+    }
+    .skip-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: #4a5568;
+      cursor: pointer;
+      user-select: none;
+    }
+    .skip-label input[type=checkbox] {
+      width: 14px;
+      height: 14px;
+      accent-color: #805ad5;
+      cursor: pointer;
+    }
+
+    /* ── Job rows ── */
+    .job-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 0.9rem;
+    }
+    .job-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.75rem;
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .job-row .field { flex: 1; min-width: 140px; }
+    .job-row .field input { width: 100%; }
+    .btn-remove {
+      flex-shrink: 0;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.82rem;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      color: #718096;
+      cursor: pointer;
+      transition: background .12s, color .12s, border-color .12s;
+    }
+    .btn-remove:hover { background: #fed7d7; color: #c53030; border-color: #feb2b2; }
+
+    /* ── Buttons ── */
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: #4a5568;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .12s;
+      margin-bottom: 1rem;
+    }
+    .btn-add:hover { background: #2d3748; }
+
+    .btn-run {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: #805ad5;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .btn-run:hover:not(:disabled) { background: #6b46c1; }
+    .btn-run:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-run svg { width: 16px; height: 16px; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      padding: 0.7rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .status-bar.running  { background: #bee3f8; color: #2b6cb0; }
+    .status-bar.success  { background: #c6f6d5; color: #276749; }
+    .status-bar.failed   { background: #fed7d7; color: #c53030; }
+    .status-bar.cancelled{ background: #fefcbf; color: #744210; }
+
+    /* ── Terminal ── */
+    .terminal-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+    .terminal {
+      background: #1a202c;
+      color: #e2e8f0;
+      font-family: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      padding: 1rem;
+      border-radius: 8px;
+      min-height: 200px;
+      max-height: 420px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .terminal .t-step { color: #9f7aea; font-weight: 600; }
+    .terminal .t-ok   { color: #68d391; }
+    .terminal .t-warn { color: #f6ad55; }
+    .terminal .t-err  { color: #fc8181; }
+    .terminal .t-info { color: #63b3ed; }
+    .terminal .t-dim  { color: #718096; }
+
+    /* ── Stats ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .stat-label { font-size: 0.68rem; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.25rem; }
+    .stat-value { font-size: 1.6rem; font-weight: 700; }
+    .stat-value.blue   { color: #3182ce; }
+    .stat-value.purple { color: #805ad5; }
+    .stat-value.green  { color: #38a169; }
+    .stat-value.gray   { color: #4a5568; }
+
+    /* ── Results table ── */
+    .results-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    .results-meta h2 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+    .meta-text { font-size: 0.8rem; color: #718096; }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: #ebf8ff;
+      color: #2b6cb0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    td {
+      padding: 0.7rem 0.9rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+      font-size: 0.88rem;
+    }
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover td { background: #f7fafc; }
+    tr.detail-row td { padding: 0; background: #fafafa; }
+    .detail-inner {
+      padding: 1rem 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .detail-block {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 0.85rem;
+    }
+    .detail-block h4 {
+      margin: 0 0 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    .detail-block.strengths h4 { color: #276749; }
+    .detail-block.gaps h4      { color: #c05621; }
+    .detail-block p { margin: 0; font-size: 0.85rem; line-height: 1.55; color: #2d3748; }
+
+    /* ── Score badges ── */
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+    .score-high { background: #c6f6d5; color: #276749; }
+    .score-mid  { background: #feebc8; color: #c05621; }
+    .score-low  { background: #fed7d7; color: #c53030; }
+    .score-none { background: #edf2f7; color: #718096; }
+
+    /* Status chip */
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.15rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .status-pass { background: #c6f6d5; color: #276749; }
+    .status-fail { background: #fed7d7; color: #c53030; }
+
+    .link-view { color: #805ad5; text-decoration: none; font-weight: 500; font-size: 0.85rem; }
+    .link-view:hover { text-decoration: underline; }
+
+    /* ── Spinner ── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 0.8s linear infinite; display: inline-block; }
+
+    /* ── Airtable jobs bar ── */
+    .jobs-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    .jobs-bar-label { font-size: 0.7rem; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.04em; margin-right: 0.25rem; white-space: nowrap; }
+    .job-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .12s;
+      border: 1px solid #cbd5e0;
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    .job-pill:hover, .job-pill.active { background: #805ad5; color: #fff; border-color: #805ad5; }
+    .jobs-bar-refresh { margin-left: auto; font-size: 0.78rem; color: #a0aec0; cursor: pointer; background: none; border: none; padding: 0; }
+    .jobs-bar-refresh:hover { color: #805ad5; }
+
     [x-cloak] { display: none !important; }
-    body { font-family: 'Inter', sans-serif; background: #09090b; color: #e4e4e7; }
-    .terminal-line { font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
-    .terminal-line.is-step { color: #a78bfa; font-weight: 600; }
-    .terminal-line.is-ok   { color: #34d399; }
-    .terminal-line.is-warn { color: #fbbf24; }
-    .terminal-line.is-err  { color: #f87171; }
-    .terminal-line.is-info { color: #60a5fa; }
-    .terminal-line.is-dim  { color: #71717a; }
-    .score-badge { display: inline-flex; align-items: center; justify-content: center;
-                   width: 2.5rem; height: 2.5rem; border-radius: 50%; font-weight: 700;
-                   font-size: 0.8rem; }
-    .score-pass  { background: #052e16; color: #4ade80; border: 1px solid #166534; }
-    .score-fail  { background: #1c0a0a; color: #f87171; border: 1px solid #7f1d1d; }
-    .score-mid   { background: #1c1a07; color: #facc15; border: 1px solid #713f12; }
-    .tab-btn { transition: all .15s; border-bottom: 2px solid transparent; }
-    .tab-btn.active { border-bottom-color: #7c3aed; color: #a78bfa; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #18181b; }
-    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
-    .pulse-dot { animation: pulse 1.8s ease-in-out infinite; }
-    @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.3 } }
-    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px 2px 10px;
-            background: #27272a; border: 1px solid #3f3f46; border-radius: 999px;
-            font-size: 13px; color: #d4d4d8; }
-    .chip button { color: #71717a; font-size: 15px; line-height: 1; cursor: pointer; }
-    .chip button:hover { color: #f87171; }
-    input[type=number]::-webkit-inner-spin-button { opacity: 1; }
   </style>
 </head>
-<body class="h-full min-h-screen" x-data="pipelineApp()" x-cloak>
+<body x-data="app()" x-cloak>
 
-  <!-- ── TOP NAV ─────────────────────────────────────────────────────────── -->
-  <header class="border-b border-zinc-800 bg-surface-1 sticky top-0 z-20">
-    <div class="max-w-screen-2xl mx-auto px-6 h-14 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <!-- Logo mark -->
-        <div class="w-7 h-7 rounded-md bg-brand flex items-center justify-center">
-          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-          </svg>
-        </div>
-        <span class="font-semibold text-zinc-100 tracking-tight">AI Recruitment Pipeline</span>
-      </div>
-
-      <!-- Status pill -->
-      <div class="flex items-center gap-2">
-        <template x-if="isRunning">
-          <span class="flex items-center gap-2 text-xs font-medium text-amber-400 bg-amber-950 border border-amber-800 px-3 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 pulse-dot"></span>
-            Pipeline running
-          </span>
-        </template>
-        <template x-if="!isRunning && pipelineStatus === 'success'">
-          <span class="flex items-center gap-2 text-xs font-medium text-emerald-400 bg-emerald-950 border border-emerald-800 px-3 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            Completed
-          </span>
-        </template>
-        <template x-if="!isRunning && pipelineStatus === 'failed'">
-          <span class="flex items-center gap-2 text-xs font-medium text-red-400 bg-red-950 border border-red-800 px-3 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
-            Failed
-          </span>
-        </template>
-        <template x-if="!isRunning && !pipelineStatus">
-          <span class="flex items-center gap-2 text-xs font-medium text-zinc-500 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
-            <span class="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
-            Idle
-          </span>
-        </template>
-      </div>
+  <!-- ── HEADER ──────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-left">
+      <h1>&#129302; AI Recruitment System</h1>
+      <p class="subtitle">Powered by GPT-4o-mini &middot; Manatal ATS &middot; Airtable</p>
     </div>
+    <span class="live-badge" x-text="serverLive ? 'Live' : 'Offline'"></span>
   </header>
 
-  <!-- ── MAIN LAYOUT ──────────────────────────────────────────────────────── -->
-  <div class="max-w-screen-2xl mx-auto px-6 py-6 flex gap-6 items-start">
+  <!-- ── MAIN CONTAINER ──────────────────────────────────────────── -->
+  <div class="container">
 
-    <!-- ── LEFT PANEL: CONFIGURE & RUN ──────────────────────────────────── -->
-    <aside class="w-72 flex-shrink-0 flex flex-col gap-4">
+    <!-- ── RUN FORM CARD ──────────────────────────────────────────── -->
+    <section class="card">
+      <h2>Run AI Candidate Scoring</h2>
 
-      <!-- Config card -->
-      <div class="bg-surface-1 border border-zinc-800 rounded-xl p-5 flex flex-col gap-5">
-        <h2 class="text-xs font-semibold uppercase tracking-widest text-zinc-500">Configure Run</h2>
-
+      <!-- ORDER: Tier 2 Cutoff → Pipeline Stage → (skip options) → Job rows → + Add → Run -->
+      <div class="config-row">
         <!-- Tier 2 Cutoff -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-medium text-zinc-400 uppercase tracking-wide">Tier 2 Cutoff (%)</label>
-          <input
-            type="number" min="0" max="100" x-model.number="config.passCutoff"
-            class="bg-surface-2 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand w-full"
-            placeholder="75"
-          />
-          <p class="text-xs text-zinc-600">Min score for Tier 2 report & PASS status</p>
+        <div class="field field-cutoff">
+          <label>Tier 2 Cutoff (%)</label>
+          <input type="number" min="0" max="100" x-model.number="config.passCutoff" placeholder="60 = default" />
         </div>
-
         <!-- Pipeline Stage -->
-        <div class="flex flex-col gap-1.5">
-          <label class="text-xs font-medium text-zinc-400 uppercase tracking-wide">Pipeline Stage</label>
-          <input
-            type="text" x-model="config.stageName"
-            class="bg-surface-2 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand w-full"
-            placeholder="New Candidates"
-          />
+        <div class="field field-stage">
+          <label>Pipeline Stage</label>
+          <input type="text" x-model="config.stageName" placeholder="New Candidates" />
         </div>
-
         <!-- Skip options -->
-        <div class="flex flex-col gap-2">
-          <label class="flex items-center gap-2.5 cursor-pointer group">
-            <input type="checkbox" x-model="config.skipRubric" class="w-4 h-4 rounded accent-brand" />
-            <span class="text-sm text-zinc-400 group-hover:text-zinc-300">Skip rubric generation</span>
+        <div class="skip-group">
+          <label class="skip-label">
+            <input type="checkbox" x-model="config.skipRubric" />
+            Skip rubric generation
           </label>
-          <label class="flex items-center gap-2.5 cursor-pointer group">
-            <input type="checkbox" x-model="config.skipReports" class="w-4 h-4 rounded accent-brand" />
-            <span class="text-sm text-zinc-400 group-hover:text-zinc-300">Skip detailed reports</span>
+          <label class="skip-label">
+            <input type="checkbox" x-model="config.skipReports" />
+            Skip detailed reports
           </label>
         </div>
       </div>
 
-      <!-- Job IDs card -->
-      <div class="bg-surface-1 border border-zinc-800 rounded-xl p-5 flex flex-col gap-4">
-        <h2 class="text-xs font-semibold uppercase tracking-widest text-zinc-500">Job IDs</h2>
+      <!-- Job rows -->
+      <div class="job-rows">
+        <template x-for="(jid, i) in jobIds" :key="i">
+          <div class="job-row">
+            <div class="field">
+              <label>Job ID</label>
+              <input
+                type="text"
+                :value="jid"
+                @input="jobIds[i] = $event.target.value"
+                placeholder="e.g. 3419430"
+              />
+            </div>
+            <button
+              class="btn-remove"
+              @click="removeJob(i)"
+              x-show="jobIds.length > 1"
+            >Remove</button>
+          </div>
+        </template>
+      </div>
 
-        <!-- Input + Add -->
-        <div class="flex gap-2">
-          <input
-            type="text" x-model="jobIdInput"
-            @keydown.enter="addJob()"
-            class="flex-1 bg-surface-2 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            placeholder="e.g. 3261113"
-          />
-          <button
-            @click="addJob()"
-            class="flex-shrink-0 bg-surface-2 hover:bg-surface-3 border border-zinc-700 text-zinc-300 rounded-lg px-3 py-2 text-sm font-medium transition-colors"
-          >+ Add</button>
-        </div>
+      <!-- + Add job -->
+      <button class="btn-add" @click="addJob()">+ Add job</button>
 
-        <!-- Job chips -->
-        <div class="flex flex-wrap gap-2 min-h-[2rem]">
-          <template x-if="jobIds.length === 0">
-            <span class="text-xs text-zinc-600 italic">No jobs added yet</span>
-          </template>
-          <template x-for="(jid, i) in jobIds" :key="i">
-            <span class="chip">
-              <span x-text="jid"></span>
-              <button @click="removeJob(i)" title="Remove">&times;</button>
-            </span>
-          </template>
-        </div>
-
-        <!-- Run button -->
+      <!-- Run -->
+      <div>
         <button
+          class="btn-run"
           @click="runPipeline()"
-          :disabled="isRunning || jobIds.length === 0"
-          class="w-full flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-4 py-2.5 text-sm transition-colors mt-1"
+          :disabled="isRunning || jobIds.filter(j => j.trim()).length === 0"
         >
           <template x-if="!isRunning">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" />
-              </svg>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               Run AI Scoring
             </span>
           </template>
           <template x-if="isRunning">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            <span style="display:inline-flex;align-items:center;gap:8px;">
+              <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
               </svg>
               Running…
             </span>
           </template>
         </button>
       </div>
+    </section>
 
-      <!-- Jobs in Airtable (sidebar list) -->
-      <div class="bg-surface-1 border border-zinc-800 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-xs font-semibold uppercase tracking-widest text-zinc-500">Jobs in Airtable</h2>
-          <button @click="loadJobs()" class="text-xs text-zinc-500 hover:text-brand transition-colors">Refresh</button>
-        </div>
-        <template x-if="loadingJobs">
-          <p class="text-xs text-zinc-600 italic">Loading…</p>
+    <!-- ── STATUS BAR ─────────────────────────────────────────────── -->
+    <div
+      class="status-bar"
+      :class="statusType"
+      x-show="statusMsg"
+      x-text="statusMsg"
+    ></div>
+
+    <!-- ── TERMINAL ───────────────────────────────────────────────── -->
+    <section class="card">
+      <div class="terminal-label">Terminal</div>
+      <div class="terminal" id="terminal" x-ref="terminal">
+        <template x-if="logs.length === 0">
+          <span class="t-dim">No output yet. Run AI Scoring to see pipeline logs.</span>
         </template>
-        <template x-if="!loadingJobs && airtableJobs.length === 0">
-          <p class="text-xs text-zinc-600 italic">No jobs found</p>
+        <template x-for="(line, i) in logs" :key="i">
+          <div :class="lineClass(line)" x-text="line"></div>
         </template>
-        <div class="flex flex-col gap-1 max-h-64 overflow-y-auto">
-          <template x-for="job in airtableJobs" :key="job.job_id">
-            <button
-              @click="viewJobCandidates(job.job_id)"
-              class="text-left px-3 py-2 rounded-lg hover:bg-surface-2 transition-colors group flex items-center justify-between"
-            >
-              <div>
-                <p class="text-sm text-zinc-200 font-medium" x-text="job.job_name || ('Job ' + job.job_id)"></p>
-                <p class="text-xs text-zinc-500" x-text="'ID: ' + job.job_id"></p>
-              </div>
-              <svg class="w-3.5 h-3.5 text-zinc-600 group-hover:text-brand flex-shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </template>
-        </div>
+        <div x-ref="logBottom"></div>
       </div>
+    </section>
 
-    </aside>
+    <!-- ── AIRTABLE JOB PILLS ─────────────────────────────────────── -->
+    <div class="jobs-bar" x-show="airtableJobs.length > 0">
+      <span class="jobs-bar-label">Jobs in Airtable</span>
+      <template x-for="job in airtableJobs" :key="job.job_id">
+        <button
+          class="job-pill"
+          :class="{ active: selectedJobId === String(job.job_id) }"
+          @click="viewJob(job.job_id)"
+          x-text="(job.job_name || ('Job ' + job.job_id))"
+        ></button>
+      </template>
+      <button class="jobs-bar-refresh" @click="loadJobs()" title="Refresh">&#8635; Refresh</button>
+    </div>
 
-    <!-- ── RIGHT PANEL: TERMINAL + RESULTS ─────────────────────────────── -->
-    <main class="flex-1 min-w-0 flex flex-col gap-4">
-
-      <!-- Tabs -->
-      <div class="flex items-center gap-1 border-b border-zinc-800 pb-0">
-        <button class="tab-btn px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-          :class="{'active': activeTab === 'terminal'}" @click="activeTab = 'terminal'">
-          Terminal
-          <template x-if="isRunning">
-            <span class="ml-1.5 inline-block w-1.5 h-1.5 rounded-full bg-amber-400 pulse-dot"></span>
-          </template>
-        </button>
-        <button class="tab-btn px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-          :class="{'active': activeTab === 'candidates'}" @click="activeTab = 'candidates'">
-          Candidates
-          <template x-if="selectedJobId">
-            <span class="ml-1.5 text-xs bg-surface-2 text-zinc-400 rounded-full px-2 py-0.5" x-text="(candidateResults[selectedJobId] || []).length"></span>
-          </template>
-        </button>
-        <button class="tab-btn px-4 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-          :class="{'active': activeTab === 'reports'}" @click="activeTab = 'reports'">
-          Reports
-        </button>
+    <!-- ── STATS ──────────────────────────────────────────────────── -->
+    <div class="stats-grid" x-show="stats.total > 0">
+      <div class="stat-card">
+        <div class="stat-label">Total Processed</div>
+        <div class="stat-value blue" x-text="stats.total"></div>
       </div>
-
-      <!-- ── TERMINAL TAB ──────────────────────────────────────────────── -->
-      <div x-show="activeTab === 'terminal'" class="flex flex-col gap-3">
-        <div class="bg-surface-1 border border-zinc-800 rounded-xl overflow-hidden">
-          <!-- Terminal header -->
-          <div class="flex items-center justify-between px-4 py-2.5 bg-surface-2 border-b border-zinc-800">
-            <div class="flex items-center gap-2">
-              <div class="flex gap-1.5">
-                <div class="w-3 h-3 rounded-full bg-zinc-700"></div>
-                <div class="w-3 h-3 rounded-full bg-zinc-700"></div>
-                <div class="w-3 h-3 rounded-full bg-zinc-700"></div>
-              </div>
-              <span class="text-xs font-mono text-zinc-500 ml-1">pipeline output</span>
-            </div>
-            <button
-              @click="clearLogs()"
-              class="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
-            >Clear</button>
-          </div>
-
-          <!-- Log output -->
-          <div
-            id="terminal"
-            class="h-[520px] overflow-y-auto p-4 bg-[#0d0d0f] flex flex-col gap-0.5"
-            x-ref="terminal"
-          >
-            <template x-if="logs.length === 0">
-              <p class="terminal-line is-dim">$ No output yet. Add job IDs and click Run AI Scoring.</p>
-            </template>
-            <template x-for="(line, i) in logs" :key="i">
-              <p class="terminal-line" :class="lineClass(line)" x-text="line"></p>
-            </template>
-            <!-- Auto-scroll anchor -->
-            <div x-ref="logBottom"></div>
-          </div>
-        </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Score</div>
+        <div class="stat-value purple" x-text="stats.avg"></div>
       </div>
+      <div class="stat-card">
+        <div class="stat-label">Top Score</div>
+        <div class="stat-value green" x-text="stats.top"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Reports</div>
+        <div class="stat-value gray" x-text="stats.reports"></div>
+      </div>
+    </div>
 
-      <!-- ── CANDIDATES TAB ────────────────────────────────────────────── -->
-      <div x-show="activeTab === 'candidates'" class="flex flex-col gap-4">
-
-        <!-- Job selector bar -->
-        <div class="flex items-center gap-3 flex-wrap">
-          <template x-for="jid in viewedJobIds" :key="jid">
-            <button
-              @click="viewJobCandidates(jid)"
-              class="px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors"
-              :class="selectedJobId === jid
-                ? 'bg-brand border-brand text-white'
-                : 'bg-surface-1 border-zinc-700 text-zinc-400 hover:border-zinc-600'"
-              x-text="'Job ' + jid"
-            ></button>
-          </template>
-          <template x-if="viewedJobIds.length === 0">
-            <p class="text-sm text-zinc-600 italic">Click a job in the sidebar to view candidates</p>
-          </template>
-        </div>
-
-        <!-- Loading state -->
-        <template x-if="loadingCandidates">
-          <div class="flex items-center justify-center h-48 bg-surface-1 border border-zinc-800 rounded-xl">
-            <div class="flex flex-col items-center gap-3 text-zinc-500">
-              <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-              </svg>
-              <span class="text-sm">Fetching from Airtable…</span>
-            </div>
-          </div>
-        </template>
-
-        <!-- Candidates table -->
-        <template x-if="!loadingCandidates && selectedJobId && (candidateResults[selectedJobId] || []).length > 0">
-          <div class="bg-surface-1 border border-zinc-800 rounded-xl overflow-hidden">
-            <div class="px-5 py-3 border-b border-zinc-800 flex items-center justify-between">
-              <h3 class="text-sm font-semibold text-zinc-300">
-                Candidate Results — Job <span x-text="selectedJobId" class="text-brand"></span>
-              </h3>
-              <span class="text-xs text-zinc-500" x-text="(candidateResults[selectedJobId] || []).length + ' candidates'"></span>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm">
-                <thead>
-                  <tr class="border-b border-zinc-800 bg-surface-2">
-                    <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500 w-8">#</th>
-                    <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Candidate</th>
-                    <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">T1 Score</th>
-                    <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">T2 Score</th>
-                    <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                    <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">CV</th>
-                    <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Report</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template x-for="(c, i) in (candidateResults[selectedJobId] || [])" :key="c.candidate_id">
-                    <tr class="border-b border-zinc-800/60 hover:bg-surface-2/50 transition-colors cursor-pointer"
-                        @click="expandedCandidate = (expandedCandidate === c.candidate_id ? null : c.candidate_id)">
-                      <td class="px-4 py-3 text-zinc-600 text-xs" x-text="i + 1"></td>
-                      <td class="px-4 py-3">
-                        <p class="font-medium text-zinc-200" x-text="c.full_name"></p>
-                        <p class="text-xs text-zinc-500" x-text="c.email"></p>
-                      </td>
-                      <td class="px-4 py-3 text-center">
-                        <span class="score-badge" :class="scoreBadgeClass(c.tier1_score)" x-text="c.tier1_score ?? '—'"></span>
-                      </td>
-                      <td class="px-4 py-3 text-center">
-                        <span class="score-badge" :class="scoreBadgeClass(c.tier2_score)" x-text="c.tier2_score ?? '—'"></span>
-                      </td>
-                      <td class="px-4 py-3 text-center">
-                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                          :class="c.tier2_status === 'PASS' || c.tier1_status === 'PASS'
-                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                            : 'bg-red-950 text-red-400 border border-red-900'"
-                          x-text="c.tier2_status || c.tier1_status || '—'">
-                        </span>
-                      </td>
-                      <td class="px-4 py-3 text-center">
-                        <template x-if="c.cv_url">
-                          <a :href="c.cv_url" target="_blank" @click.stop
-                             class="inline-flex items-center gap-1 text-xs text-brand hover:text-brand-light transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                            </svg>
-                            View
-                          </a>
-                        </template>
-                        <template x-if="!c.cv_url">
-                          <span class="text-zinc-700 text-xs">—</span>
-                        </template>
-                      </td>
-                      <td class="px-4 py-3 text-center">
-                        <template x-if="c.report_url">
-                          <a :href="c.report_url" target="_blank" @click.stop
-                             class="inline-flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                            </svg>
-                            Report
-                          </a>
-                        </template>
-                        <template x-if="!c.report_url">
-                          <span class="text-zinc-700 text-xs">—</span>
-                        </template>
-                      </td>
-                    </tr>
-                    <!-- Expanded row: AI summary -->
-                    <template x-if="expandedCandidate === c.candidate_id">
-                      <tr class="bg-surface-2/40">
-                        <td colspan="7" class="px-8 py-4">
-                          <div class="grid grid-cols-3 gap-6 text-sm">
-                            <div>
-                              <p class="text-xs font-semibold uppercase tracking-wide text-zinc-500 mb-1.5">AI Summary</p>
-                              <p class="text-zinc-400 leading-relaxed text-xs" x-text="c.ai_summary || '—'"></p>
-                            </div>
-                            <div>
-                              <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600 mb-1.5">Strengths</p>
-                              <p class="text-zinc-400 leading-relaxed text-xs" x-text="c.ai_strengths || '—'"></p>
-                            </div>
-                            <div>
-                              <p class="text-xs font-semibold uppercase tracking-wide text-red-600 mb-1.5">Gaps</p>
-                              <p class="text-zinc-400 leading-relaxed text-xs" x-text="c.ai_gaps || '—'"></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                    </template>
+    <!-- ── CANDIDATE RESULTS ──────────────────────────────────────── -->
+    <section
+      class="card"
+      x-show="selectedJobId && (candidateMap[selectedJobId] || []).length > 0"
+    >
+      <div class="results-meta">
+        <h2>Candidate Results</h2>
+        <span class="meta-text" x-text="(candidateMap[selectedJobId] || []).length + ' candidates · sorted by score'"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Candidate</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>CV</th>
+              <th>Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(c, i) in (candidateMap[selectedJobId] || [])" :key="c.candidate_id">
+              <!-- Main row -->
+              <tr class="clickable" @click="toggleExpand(c.candidate_id)">
+                <td x-text="i + 1"></td>
+                <td>
+                  <strong x-text="c.full_name"></strong>
+                  <div style="font-size:.8rem;color:#718096;" x-text="c.email"></div>
+                </td>
+                <td>
+                  <span
+                    class="score-badge"
+                    :class="scoreCls(c.tier1_score)"
+                    x-text="c.tier1_score ?? '—'"
+                  ></span>
+                </td>
+                <td>
+                  <span
+                    class="status-chip"
+                    :class="c.tier1_status === 'PASS' ? 'status-pass' : 'status-fail'"
+                    x-text="c.tier1_status || '—'"
+                  ></span>
+                </td>
+                <td>
+                  <template x-if="c.cv_url">
+                    <a class="link-view" :href="c.cv_url" target="_blank" @click.stop>View</a>
                   </template>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </template>
-
-        <template x-if="!loadingCandidates && selectedJobId && (candidateResults[selectedJobId] || []).length === 0">
-          <div class="flex flex-col items-center justify-center h-48 bg-surface-1 border border-zinc-800 rounded-xl gap-2">
-            <p class="text-zinc-500 text-sm">No candidates found for job <span x-text="selectedJobId" class="text-brand font-medium"></span></p>
-            <p class="text-zinc-700 text-xs">Run the pipeline first to generate scores</p>
-          </div>
-        </template>
-      </div>
-
-      <!-- ── REPORTS TAB ────────────────────────────────────────────────── -->
-      <div x-show="activeTab === 'reports'" class="flex flex-col gap-4">
-
-        <!-- Job selector -->
-        <div class="flex items-center gap-3 flex-wrap">
-          <template x-for="jid in viewedJobIds" :key="jid">
-            <button
-              @click="viewJobCandidates(jid)"
-              class="px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors"
-              :class="selectedJobId === jid
-                ? 'bg-brand border-brand text-white'
-                : 'bg-surface-1 border-zinc-700 text-zinc-400 hover:border-zinc-600'"
-              x-text="'Job ' + jid"
-            ></button>
-          </template>
-        </div>
-
-        <!-- Reports table (only candidates with tier2 score) -->
-        <template x-if="selectedJobId">
-          <div class="bg-surface-1 border border-zinc-800 rounded-xl overflow-hidden">
-            <div class="px-5 py-3 border-b border-zinc-800 flex items-center justify-between">
-              <h3 class="text-sm font-semibold text-zinc-300">
-                Report Results — High Scorers &amp; Rescored
-              </h3>
-              <span class="text-xs text-zinc-500" x-text="reportCandidates.length + ' reports'"></span>
-            </div>
-            <template x-if="reportCandidates.length === 0">
-              <div class="flex items-center justify-center h-32">
-                <p class="text-sm text-zinc-600 italic">No detailed reports generated yet for this job</p>
-              </div>
+                  <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
+                </td>
+                <td>
+                  <template x-if="c.report_url">
+                    <a class="link-view" :href="c.report_url" target="_blank" @click.stop>View report</a>
+                  </template>
+                  <template x-if="!c.report_url"><span style="color:#cbd5e0">—</span></template>
+                </td>
+              </tr>
+              <!-- Expanded detail row -->
+              <template x-if="expandedId === c.candidate_id">
+                <tr class="detail-row">
+                  <td colspan="6">
+                    <div class="detail-inner">
+                      <div class="detail-block">
+                        <h4>&#128214; Summary</h4>
+                        <p x-text="c.ai_summary || '—'"></p>
+                      </div>
+                      <div class="detail-block strengths">
+                        <h4>&#10003; Strengths</h4>
+                        <p x-text="c.ai_strengths || '—'"></p>
+                      </div>
+                      <div class="detail-block gaps">
+                        <h4>&#9888; Gaps</h4>
+                        <p x-text="c.ai_gaps || '—'"></p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
             </template>
-            <template x-if="reportCandidates.length > 0">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr class="border-b border-zinc-800 bg-surface-2">
-                      <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500 w-8">#</th>
-                      <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Candidate</th>
-                      <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">T1 Score</th>
-                      <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">T2 Score</th>
-                      <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                      <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">CV</th>
-                      <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Report</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <template x-for="(c, i) in reportCandidates" :key="c.candidate_id">
-                      <tr class="border-b border-zinc-800/60 hover:bg-surface-2/50 transition-colors">
-                        <td class="px-4 py-3 text-zinc-600 text-xs" x-text="i + 1"></td>
-                        <td class="px-4 py-3">
-                          <p class="font-medium text-zinc-200" x-text="c.full_name"></p>
-                          <p class="text-xs text-zinc-500" x-text="c.email"></p>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                          <span class="score-badge" :class="scoreBadgeClass(c.tier1_score)" x-text="c.tier1_score ?? '—'"></span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                          <span class="score-badge" :class="scoreBadgeClass(c.tier2_score)" x-text="c.tier2_score ?? '—'"></span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                          <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold"
-                            :class="c.tier2_status === 'PASS' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-red-950 text-red-400 border border-red-900'"
-                            x-text="c.tier2_status || '—'">
-                          </span>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                          <template x-if="c.cv_url">
-                            <a :href="c.cv_url" target="_blank" class="inline-flex items-center gap-1 text-xs text-brand hover:text-brand-light transition-colors">
-                              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                              </svg>
-                              View
-                            </a>
-                          </template>
-                          <template x-if="!c.cv_url"><span class="text-zinc-700 text-xs">—</span></template>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                          <template x-if="c.report_url">
-                            <a :href="c.report_url" target="_blank"
-                               class="inline-flex items-center gap-1 text-xs font-medium text-violet-400 hover:text-violet-300 bg-violet-950 border border-violet-800 px-2.5 py-1 rounded-full transition-colors">
-                              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                              </svg>
-                              Open Report
-                            </a>
-                          </template>
-                          <template x-if="!c.report_url"><span class="text-zinc-700 text-xs">—</span></template>
-                        </td>
-                      </tr>
-                    </template>
-                  </tbody>
-                </table>
-              </div>
-            </template>
-          </div>
-        </template>
-
+          </tbody>
+        </table>
       </div>
-    </main>
-  </div>
+    </section>
 
-  <!-- ── ALPINE APP ─────────────────────────────────────────────────────── -->
+    <!-- ── REPORT RESULTS ─────────────────────────────────────────── -->
+    <section
+      class="card"
+      x-show="selectedJobId && reportCandidates.length > 0"
+    >
+      <div class="results-meta">
+        <h2>Report Results</h2>
+        <span class="badge-pill">High-scoring &amp; rescored</span>
+        <span class="meta-text" x-text="reportCandidates.length + ' candidates with reports'"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Candidate</th>
+              <th>T1 Score</th>
+              <th>T2 Score</th>
+              <th>Status</th>
+              <th>CV</th>
+              <th>Report</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="(c, i) in reportCandidates" :key="c.candidate_id">
+              <tr>
+                <td x-text="i + 1"></td>
+                <td>
+                  <strong x-text="c.full_name"></strong>
+                  <div style="font-size:.8rem;color:#718096;" x-text="c.email"></div>
+                </td>
+                <td>
+                  <span class="score-badge" :class="scoreCls(c.tier1_score)" x-text="c.tier1_score ?? '—'"></span>
+                </td>
+                <td>
+                  <span class="score-badge" :class="scoreCls(c.tier2_score)" x-text="c.tier2_score ?? '—'"></span>
+                </td>
+                <td>
+                  <span
+                    class="status-chip"
+                    :class="(c.tier2_status || c.tier1_status) === 'PASS' ? 'status-pass' : 'status-fail'"
+                    x-text="c.tier2_status || c.tier1_status || '—'"
+                  ></span>
+                </td>
+                <td>
+                  <template x-if="c.cv_url">
+                    <a class="link-view" :href="c.cv_url" target="_blank">View</a>
+                  </template>
+                  <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
+                </td>
+                <td>
+                  <template x-if="c.report_url">
+                    <a class="link-view" :href="c.report_url" target="_blank">View report</a>
+                  </template>
+                  <template x-if="!c.report_url"><span style="color:#cbd5e0">—</span></template>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div><!-- /container -->
+
+  <!-- ── ALPINE APP ─────────────────────────────────────────────── -->
   <script>
-    function pipelineApp() {
+    function app() {
       return {
-        // Config state
+        serverLive: false,
+
         config: {
-          passCutoff: 75,
+          passCutoff: null,
           stageName: 'New Candidates',
           skipRubric: false,
           skipReports: false,
         },
 
-        // Job IDs
-        jobIdInput: '',
-        jobIds: [],
+        jobIds: [''],
 
-        // Run state
-        runId: null,
         isRunning: false,
-        pipelineStatus: null,   // null | 'success' | 'failed' | 'cancelled'
+        runId: null,
+        statusMsg: '',
+        statusType: 'running',
 
-        // Logs
         logs: [],
+        expandedId: null,
 
-        // UI state
-        activeTab: 'terminal',
-        expandedCandidate: null,
-
-        // Airtable data
         airtableJobs: [],
-        loadingJobs: false,
         selectedJobId: null,
-        viewedJobIds: [],
-        candidateResults: {},   // { job_id: candidates[] }
-        loadingCandidates: false,
+        candidateMap: {},   // { job_id: candidates[] }
 
-        // ── Computed ──────────────────────────────────────────────────────
-        get reportCandidates() {
-          if (!this.selectedJobId) return [];
-          return (this.candidateResults[this.selectedJobId] || []).filter(c => c.report_url);
+        get stats() {
+          const list = this.candidateMap[this.selectedJobId] || [];
+          const scores = list.map(c => c.tier1_score).filter(s => s != null);
+          return {
+            total:   list.length,
+            avg:     scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0,
+            top:     scores.length ? Math.max(...scores) : 0,
+            reports: list.filter(c => c.report_url).length,
+          };
         },
 
-        // ── Init ──────────────────────────────────────────────────────────
+        get reportCandidates() {
+          return (this.candidateMap[this.selectedJobId] || []).filter(c => c.report_url);
+        },
+
         init() {
+          fetch('/health').then(r => r.ok && (this.serverLive = true)).catch(() => {});
           this.loadJobs();
         },
 
-        // ── Job management ────────────────────────────────────────────────
+        // ── Job management ───────────────────────────────────────────
         addJob() {
-          const id = this.jobIdInput.trim();
-          if (!id) return;
-          if (!this.jobIds.includes(id)) this.jobIds.push(id);
-          this.jobIdInput = '';
+          this.jobIds.push('');
         },
-
         removeJob(i) {
-          this.jobIds.splice(i, 1);
+          if (this.jobIds.length > 1) this.jobIds.splice(i, 1);
         },
 
-        // ── Pipeline run ──────────────────────────────────────────────────
+        // ── Pipeline run ─────────────────────────────────────────────
         async runPipeline() {
-          if (this.isRunning || this.jobIds.length === 0) return;
+          const validIds = this.jobIds.map(j => j.trim()).filter(Boolean);
+          if (!validIds.length || this.isRunning) return;
 
           this.isRunning = true;
-          this.pipelineStatus = null;
           this.logs = [];
-          this.activeTab = 'terminal';
+          this.setStatus('Pipeline starting…', 'running');
 
           try {
             const res = await fetch('/api/run', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                job_ids: this.jobIds,
-                pass_threshold: this.config.passCutoff,
-                stage_name: this.config.stageName,
-                skip_rubric: this.config.skipRubric,
-                skip_reports: this.config.skipReports,
+                job_ids:        validIds,
+                pass_threshold: this.config.passCutoff || 75,
+                stage_name:     this.config.stageName  || 'New Candidates',
+                skip_rubric:    this.config.skipRubric,
+                skip_reports:   this.config.skipReports,
               }),
             });
             const data = await res.json();
             this.runId = data.run_id;
+            this.setStatus('Running AI scoring. Watch the terminal below.', 'running');
 
-            // Connect to SSE stream
             const es = new EventSource(`/api/stream/${this.runId}`);
-
             es.onmessage = (evt) => {
               const msg = evt.data;
-
               if (msg === '[heartbeat]') return;
-
               if (msg.startsWith('[PIPELINE_DONE:')) {
-                const status = msg.match(/\[PIPELINE_DONE:(.+)\]/)?.[1] ?? 'done';
-                this.pipelineStatus = status === 'success' ? 'success' : 'failed';
+                const ok = msg.includes(':success');
                 this.isRunning = false;
+                this.setStatus(
+                  ok ? 'Done. Results loaded below.' : 'Pipeline finished with errors. Check terminal.',
+                  ok ? 'success' : 'failed'
+                );
                 es.close();
-                // Auto-load candidates for run jobs
-                this.jobIds.forEach(jid => this.viewJobCandidates(jid));
+                validIds.forEach(jid => this.loadCandidates(jid));
                 this.loadJobs();
                 return;
               }
-
               this.logs.push(msg);
               this.$nextTick(() => {
-                const el = this.$refs.logBottom;
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                this.$refs.logBottom?.scrollIntoView({ behavior: 'smooth', block: 'end' });
               });
             };
-
             es.onerror = () => {
               if (this.isRunning) {
-                this.logs.push('[ERROR] Connection lost. Check server logs.');
                 this.isRunning = false;
-                this.pipelineStatus = 'failed';
+                this.setStatus('Connection lost. Check server logs.', 'failed');
               }
               es.close();
             };
-
           } catch (err) {
-            this.logs.push(`[ERROR] ${err.message}`);
             this.isRunning = false;
-            this.pipelineStatus = 'failed';
+            this.setStatus('Error: ' + err.message, 'failed');
           }
         },
 
-        clearLogs() {
-          this.logs = [];
+        setStatus(msg, type) {
+          this.statusMsg  = msg;
+          this.statusType = type;
         },
 
-        // ── Airtable data ─────────────────────────────────────────────────
+        // ── Airtable data ─────────────────────────────────────────────
         async loadJobs() {
-          this.loadingJobs = true;
           try {
-            const res = await fetch('/api/jobs');
-            const data = await res.json();
-            this.airtableJobs = data.jobs || [];
-          } catch { this.airtableJobs = []; }
-          finally { this.loadingJobs = false; }
+            const r = await fetch('/api/jobs');
+            const d = await r.json();
+            this.airtableJobs = d.jobs || [];
+          } catch {}
         },
 
-        async viewJobCandidates(jobId) {
+        async viewJob(jobId) {
           this.selectedJobId = String(jobId);
-          if (!this.viewedJobIds.includes(this.selectedJobId)) {
-            this.viewedJobIds.push(this.selectedJobId);
-          }
-          this.activeTab = 'candidates';
-          this.loadingCandidates = true;
-          try {
-            const res = await fetch(`/api/candidates/${jobId}`);
-            const data = await res.json();
-            this.candidateResults[this.selectedJobId] = data.candidates || [];
-          } catch { this.candidateResults[this.selectedJobId] = []; }
-          finally { this.loadingCandidates = false; }
+          await this.loadCandidates(jobId);
         },
 
-        // ── Helpers ───────────────────────────────────────────────────────
+        async loadCandidates(jobId) {
+          const jid = String(jobId);
+          if (!this.selectedJobId) this.selectedJobId = jid;
+          try {
+            const r = await fetch(`/api/candidates/${jid}`);
+            const d = await r.json();
+            this.candidateMap[jid] = d.candidates || [];
+            if (this.selectedJobId === jid && !this.selectedJobId) this.selectedJobId = jid;
+          } catch {
+            this.candidateMap[jid] = [];
+          }
+        },
+
+        toggleExpand(id) {
+          this.expandedId = this.expandedId === id ? null : id;
+        },
+
+        // ── Helpers ───────────────────────────────────────────────────
         lineClass(line) {
-          if (!line) return 'is-dim';
-          if (line.includes('======') || line.includes('[STEP ')) return 'is-step';
-          if (line.includes('[OK]') || line.includes('✅') || line.includes('Moved ') || line.includes('✓')) return 'is-ok';
-          if (line.includes('[WARN]') || line.includes('⚠') || line.includes('[no resume]')) return 'is-warn';
-          if (line.includes('[ERROR]') || line.includes('ERROR:') || line.includes('failed')) return 'is-err';
-          if (line.includes('[INFO]') || line.includes('[force-rescore]') || line.includes('Skipped')) return 'is-info';
-          if (line.includes('Scored:') || line.includes('Skipped (Airtable)') || line.includes('Processing:')) return '';
-          if (line.startsWith('  ') || line === '') return 'is-dim';
+          if (!line) return 't-dim';
+          const l = line;
+          if (l.includes('======') || l.includes('[STEP ')) return 't-step';
+          if (l.includes('[OK]') || l.includes('completed successfully')) return 't-ok';
+          if (l.includes('[WARN]') || l.includes('[no resume]')) return 't-warn';
+          if (l.includes('[ERROR]') || l.includes('ERROR:')) return 't-err';
+          if (l.includes('[INFO]') || l.includes('Skipped (Airtable)') || l.includes('[force-rescore]')) return 't-info';
+          if (l.startsWith('  ') || l === '') return 't-dim';
           return '';
         },
 
-        scoreBadgeClass(score) {
-          if (score === null || score === undefined) return 'bg-zinc-800 text-zinc-500 border border-zinc-700';
-          if (score >= this.config.passCutoff) return 'score-pass';
-          if (score >= this.config.passCutoff * 0.7) return 'score-mid';
-          return 'score-fail';
+        scoreCls(score) {
+          if (score == null) return 'score-none';
+          const cut = this.config.passCutoff || 75;
+          if (score >= cut)         return 'score-high';
+          if (score >= cut * 0.7)   return 'score-mid';
+          return 'score-low';
         },
       };
     }

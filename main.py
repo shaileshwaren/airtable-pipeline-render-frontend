@@ -156,6 +156,11 @@ def _pipeline_thread(run_id: str, req: RunRequest) -> None:
 # ─────────────────────────────────────────────────────────────────────────────
 # API — pipeline control
 # ─────────────────────────────────────────────────────────────────────────────
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.post("/api/run")
 def start_run(req: RunRequest):
     if not req.job_ids:
