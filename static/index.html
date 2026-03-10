@@ -605,7 +605,7 @@
           this.logs = [];
           this.selectedJobId = null;
           this.candidateMap = {};
-          this.setStatus('Running AI scoring. Watch the terminal below.', 'running');
+          this.setStatus('Starting pipeline… watch the terminal below.', 'running');
 
           try {
             const res = await fetch('/api/run', {
@@ -634,11 +634,13 @@
                   ok ? 'success' : 'failed'
                 );
                 es.close();
-                // Load candidates for every job that was run
                 validIds.forEach(jid => this.loadCandidates(jid));
                 return;
               }
               this.logs.push(msg);
+              // Dynamically update status bar to reflect current pipeline step
+              const parsed = this.parseStatus(msg);
+              if (parsed) this.setStatus(parsed, 'running');
               this.$nextTick(() => {
                 this.$refs.logBottom?.scrollIntoView({ behavior: 'smooth', block: 'end' });
               });
@@ -659,6 +661,53 @@
         setStatus(msg, type) {
           this.statusMsg  = msg;
           this.statusType = type;
+        },
+
+        // Parse a log line and return a human-readable status string, or null
+        parseStatus(line) {
+          let m;
+          // Multi-job header: Processing Job 1 of 2: 3261113
+          m = line.match(/Processing Job (\d+) of (\d+):\s*(\S+)/);
+          if (m) return `Processing job ${m[3]} (${m[1]} of ${m[2]})…`;
+
+          // Step header: [STEP 2/4] AI Scoring (fetch from Manatal + score against rubric)
+          m = line.match(/\[STEP\s+(\d+)\/(\d+)\]\s+(.+)/);
+          if (m) return `Step ${m[1]}/${m[2]} — ${m[3].trim()}`;
+
+          // Found N candidates in stage
+          m = line.match(/Found (\d+) candidates? in '(.+)' stage/);
+          if (m) return `Found ${m[1]} candidate(s) in "${m[2]}" — scoring…`;
+
+          // Per-candidate Tier 1 score: Scored: 3/12. Jane Doe (ID: 123)
+          m = line.match(/^Scored:\s+(\d+)\/(\d+)\.\s+(.+?)\s+\(ID:/);
+          if (m) return `Tier 1 scoring: ${m[1]}/${m[2]} — ${m[3]}`;
+
+          // Per-candidate skip: Skipped (Airtable): 2/12.
+          m = line.match(/^Skipped \(Airtable\):\s+(\d+)\/(\d+)\./);
+          if (m) return `Checking candidates: ${m[1]}/${m[2]} (already scored)…`;
+
+          // Rubric regenerated → rescore triggered
+          if (line.includes('Rubric was regenerated')) return 'Rubric updated — rescoring all candidates…';
+
+          // Tier 2 reports
+          if (line.includes('Generating Detailed AI-Powered Reports')) {
+            m = line.match(/Job (\S+)$/);
+            return m ? `Generating Tier 2 reports for job ${m[1]}…` : 'Generating Tier 2 reports…';
+          }
+          if (line.includes('✓ Uploaded report to Airtable')) return 'Uploading reports to Airtable…';
+          if (line.includes('AI-Powered Report Generation Complete')) return 'Tier 2 reports complete ✓';
+
+          // Stage move
+          m = line.match(/Moving (\d+) candidate\(s\) to '(.+)'/);
+          if (m) return `Moving ${m[1]} candidate(s) to "${m[2]}"…`;
+          m = line.match(/Moved (\d+) candidate\(s\) to '(.+)'/);
+          if (m) return `Moved ${m[1]} candidate(s) to "${m[2]}" ✓`;
+
+          // Job complete
+          m = line.match(/Job (\S+) completed successfully/);
+          if (m) return `Job ${m[1]} complete ✓ — loading next…`;
+
+          return null;
         },
 
         // ── Load candidates from Airtable ──
