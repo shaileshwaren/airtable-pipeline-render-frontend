@@ -355,7 +355,7 @@
       <div class="config-row">
         <div class="field field-cutoff">
           <label>Tier 2 Cutoff (%)</label>
-          <input type="number" min="0" max="100" x-model.number="passCutoff" placeholder="60 = default" />
+          <input type="number" min="0" max="100" x-model.number="passCutoff" placeholder="Default: 60" />
         </div>
         <div class="field field-stage">
           <label>Pipeline Stage</label>
@@ -566,7 +566,7 @@
         serverLive: false,
 
         // Form state
-        passCutoff: null,
+        passCutoff: 60,
         stageName: 'New Candidates',
         jobIds: [''],
 
@@ -613,7 +613,7 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 job_ids:        validIds,
-                pass_threshold: this.passCutoff  || 75,
+                pass_threshold: this.passCutoff ?? 60,
                 stage_name:     this.stageName   || 'New Candidates',
                 skip_rubric:    false,
                 skip_reports:   false,
@@ -736,7 +736,7 @@
 
         scoreCls(score) {
           if (score == null) return 'score-none';
-          const cut = this.passCutoff || 75;
+          const cut = this.passCutoff ?? 60;
           if (score >= cut)       return 'score-high';
           if (score >= cut * 0.7) return 'score-mid';
           return 'score-low';

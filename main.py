@@ -52,7 +52,7 @@ runs: Dict[str, Dict[str, Any]] = {}
 
 class RunRequest(BaseModel):
     job_ids: List[str]
-    pass_threshold: int = 75
+    pass_threshold: int = 60
     stage_name: str = "New Candidates"
     skip_rubric: bool = False
     skip_reports: bool = False
