@@ -473,33 +473,29 @@
                   </td>
                   <td x-text="c.match_stage_name || '—'"></td>
                   <td>
-                    <template x-if="c.cv_url">
-                      <a class="link-view" :href="c.cv_url" target="_blank" @click.stop>View</a>
-                    </template>
-                    <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
+                    <a class="link-view" :href="c.cv_url" target="_blank" @click.stop x-show="c.cv_url">View</a>
+                    <span style="color:#cbd5e0" x-show="!c.cv_url">—</span>
                   </td>
                 </tr>
-                <!-- Expanded detail -->
-                <template x-if="expandedId === c.candidate_id">
-                  <tr class="detail-row">
-                    <td colspan="6">
-                      <div class="detail-inner">
-                        <div class="detail-block">
-                          <h4>&#128214; Summary</h4>
-                          <p x-text="c.ai_summary || '—'"></p>
-                        </div>
-                        <div class="detail-block strengths">
-                          <h4>&#10003; Strengths</h4>
-                          <p x-text="c.ai_strengths || '—'"></p>
-                        </div>
-                        <div class="detail-block gaps">
-                          <h4>&#9888; Gaps</h4>
-                          <p x-text="c.ai_gaps || '—'"></p>
-                        </div>
+                <!-- Expanded detail — x-show keeps the <tr> in the DOM (x-if inside tbody is stripped by browser) -->
+                <tr class="detail-row" x-show="expandedId === c.candidate_id">
+                  <td colspan="6">
+                    <div class="detail-inner">
+                      <div class="detail-block">
+                        <h4>&#128214; Summary</h4>
+                        <p x-text="c.ai_summary || '—'"></p>
                       </div>
-                    </td>
-                  </tr>
-                </template>
+                      <div class="detail-block strengths">
+                        <h4>&#10003; Strengths</h4>
+                        <p x-text="c.ai_strengths || '—'"></p>
+                      </div>
+                      <div class="detail-block gaps">
+                        <h4>&#9888; Gaps</h4>
+                        <p x-text="c.ai_gaps || '—'"></p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
               </template>
             </tbody>
           </table>
@@ -546,16 +542,12 @@
                   </td>
                   <td x-text="c.match_stage_name || '—'"></td>
                   <td>
-                    <template x-if="c.cv_url">
-                      <a class="link-view" :href="c.cv_url" target="_blank">View</a>
-                    </template>
-                    <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
+                    <a class="link-view" :href="c.cv_url" target="_blank" x-show="c.cv_url">View</a>
+                    <span style="color:#cbd5e0" x-show="!c.cv_url">—</span>
                   </td>
                   <td>
-                    <template x-if="c.report_url">
-                      <a class="link-view" :href="c.report_url" target="_blank">View report</a>
-                    </template>
-                    <template x-if="!c.report_url"><span style="color:#cbd5e0">—</span></template>
+                    <a class="link-view" :href="c.report_url" target="_blank" x-show="c.report_url">View report</a>
+                    <span style="color:#cbd5e0" x-show="!c.report_url">—</span>
                   </td>
                 </tr>
               </template>
