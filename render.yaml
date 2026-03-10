@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: airtable-pipeline-frontend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MANATAL_API_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: AIRTABLE_TOKEN
+        sync: false
+      - key: AIRTABLE_BASE_ID
+        sync: false
+      - key: AIRTABLE_TABLE_ID
+        sync: false
+      - key: AIRTABLE_RUBRIC_TABLE_ID
+        sync: false
+      - key: AIRTABLE_JOB_TABLE_ID
+        value: tblCV6w4fGex9VgzK
+      - key: PASS_THRESHOLD
+        value: "75"
+      - key: TARGET_STAGE_NAME
+        value: "New Candidates"
+      - key: TARGET_STAGE_AFTER
+        value: "AI Screened"
+      - key: PYTHONUTF8
+        value: "1"
+      - key: PYTHONIOENCODING
+        value: "utf-8"

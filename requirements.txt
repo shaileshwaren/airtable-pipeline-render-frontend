@@ -1,0 +1,20 @@
+# Web server
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+python-multipart>=0.0.6
+
+# Environment
+python-dotenv>=1.0.0
+
+# AI scoring
+openai>=1.0.0
+pyyaml
+
+# Airtable & HTTP
+pyairtable>=2.0.0
+requests>=2.32.0
+
+# Document text extraction (CV processing)
+pypdf>=3.17.0
+python-docx>=1.1.0
+tiktoken>=0.5.0
