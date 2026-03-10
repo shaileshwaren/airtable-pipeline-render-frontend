@@ -267,19 +267,19 @@ def get_candidates(job_id: str):
         report_url = rpt_att[0].get("url") if rpt_att else None
 
         candidates.append({
-            "candidate_id":  f.get("candidate_id"),
-            "full_name":     f.get("full_name", "—"),
-            "email":         f.get("email", ""),
-            "tier1_score":   f.get("tier1_score"),
-            "tier1_status":  f.get("tier1_status", ""),
-            "tier2_score":   f.get("tier2_score"),
-            "tier2_status":  f.get("tier2_status", ""),
-            "ai_summary":    f.get("ai_summary", ""),
-            "ai_strengths":  f.get("ai_strengths", ""),
-            "ai_gaps":       f.get("ai_gaps", ""),
-            "cv_url":        cv_url,
-            "report_url":    report_url,
-            "cache_key":     f.get("cache_key", ""),
+            "candidate_id":      f.get("candidate_id"),
+            "full_name":         f.get("full_name", "—"),
+            "email":             f.get("email", ""),
+            "job_name":          f.get("job_name", ""),
+            "org_name":          f.get("organisation_name", ""),
+            "match_stage_name":  f.get("match_stage_name", ""),
+            "tier1_score":       f.get("tier1_score"),
+            "tier2_score":       f.get("tier2_score"),
+            "ai_summary":        f.get("ai_summary", ""),
+            "ai_strengths":      f.get("ai_strengths", ""),
+            "ai_gaps":           f.get("ai_gaps", ""),
+            "cv_url":            cv_url,
+            "report_url":        report_url,
         })
 
     candidates.sort(key=lambda c: c.get("tier1_score") or 0, reverse=True)

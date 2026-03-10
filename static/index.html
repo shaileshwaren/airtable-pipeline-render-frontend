@@ -27,7 +27,7 @@
       gap: 0.75rem;
       flex-wrap: wrap;
     }
-    .header-left h1 {
+    .header h1 {
       margin: 0;
       font-size: 1.35rem;
       font-weight: 700;
@@ -35,7 +35,7 @@
       align-items: center;
       gap: 0.5rem;
     }
-    .header-left .subtitle {
+    .header .subtitle {
       margin: 0.2rem 0 0;
       font-size: 0.8rem;
       opacity: 0.75;
@@ -50,13 +50,12 @@
     }
     .live-badge::before {
       content: '';
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       border-radius: 50%;
       background: #68d391;
     }
 
-    /* ── Container ── */
+    /* ── Layout ── */
     .container {
       max-width: 1100px;
       margin: 0 auto;
@@ -78,68 +77,44 @@
       color: #1a202c;
     }
 
-    /* ── Form ── */
-    .config-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      gap: 1rem;
-      margin-bottom: 1.1rem;
-    }
+    /* ── Form fields ── */
     .field {
       display: flex;
       flex-direction: column;
       gap: 0.3rem;
     }
-    .field label,
-    .field-label {
-      font-size: 0.7rem;
-      font-weight: 600;
+    .field label {
+      font-size: 0.68rem;
+      font-weight: 700;
       color: #718096;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
     }
-    .field input[type=text],
-    .field input[type=number] {
+    .field input {
       padding: 0.45rem 0.75rem;
       font-size: 0.9rem;
       border: 1px solid #cbd5e0;
       border-radius: 6px;
       outline: none;
-      transition: border-color .15s;
       background: #fff;
       color: #1a202c;
+      transition: border-color .15s;
     }
     .field input:focus {
       border-color: #805ad5;
-      box-shadow: 0 0 0 2px rgba(128,90,213,.15);
+      box-shadow: 0 0 0 2px rgba(128,90,213,.12);
+    }
+
+    /* Config row — inline at top of form */
+    .config-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+      margin-bottom: 1.1rem;
     }
     .field-cutoff input { width: 130px; }
     .field-stage  input { width: 200px; }
-
-    /* Skip checkboxes */
-    .skip-group {
-      display: flex;
-      gap: 1.25rem;
-      align-items: center;
-      flex-wrap: wrap;
-      padding-bottom: 0.15rem;
-    }
-    .skip-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.8rem;
-      color: #4a5568;
-      cursor: pointer;
-      user-select: none;
-    }
-    .skip-label input[type=checkbox] {
-      width: 14px;
-      height: 14px;
-      accent-color: #805ad5;
-      cursor: pointer;
-    }
 
     /* ── Job rows ── */
     .job-rows {
@@ -160,6 +135,7 @@
     }
     .job-row .field { flex: 1; min-width: 140px; }
     .job-row .field input { width: 100%; }
+
     .btn-remove {
       flex-shrink: 0;
       padding: 0.45rem 0.75rem;
@@ -223,15 +199,14 @@
     .status-bar.running  { background: #bee3f8; color: #2b6cb0; }
     .status-bar.success  { background: #c6f6d5; color: #276749; }
     .status-bar.failed   { background: #fed7d7; color: #c53030; }
-    .status-bar.cancelled{ background: #fefcbf; color: #744210; }
 
     /* ── Terminal ── */
     .terminal-label {
-      font-size: 0.7rem;
-      font-weight: 600;
+      font-size: 0.68rem;
+      font-weight: 700;
       color: #718096;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       margin-bottom: 0.5rem;
     }
     .terminal {
@@ -248,61 +223,42 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
-    .terminal .t-step { color: #9f7aea; font-weight: 600; }
-    .terminal .t-ok   { color: #68d391; }
-    .terminal .t-warn { color: #f6ad55; }
-    .terminal .t-err  { color: #fc8181; }
-    .terminal .t-info { color: #63b3ed; }
-    .terminal .t-dim  { color: #718096; }
+    .t-step { color: #9f7aea; font-weight: 600; }
+    .t-ok   { color: #68d391; }
+    .t-warn { color: #f6ad55; }
+    .t-err  { color: #fc8181; }
+    .t-info { color: #63b3ed; }
+    .t-dim  { color: #718096; }
 
-    /* ── Stats ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .stat-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 1rem;
-    }
-    .stat-label { font-size: 0.68rem; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.25rem; }
-    .stat-value { font-size: 1.6rem; font-weight: 700; }
-    .stat-value.blue   { color: #3182ce; }
-    .stat-value.purple { color: #805ad5; }
-    .stat-value.green  { color: #38a169; }
-    .stat-value.gray   { color: #4a5568; }
-
-    /* ── Results table ── */
-    .results-meta {
+    /* ── Results tables ── */
+    .results-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.9rem;
     }
-    .results-meta h2 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+    .results-header h2 { margin: 0; font-size: 1.05rem; font-weight: 600; color: #1a202c; }
     .meta-text { font-size: 0.8rem; color: #718096; }
     .badge-pill {
       display: inline-flex;
       align-items: center;
-      padding: 0.15rem 0.6rem;
+      padding: 2px 10px;
       border-radius: 9999px;
       font-size: 0.68rem;
-      font-weight: 600;
+      font-weight: 700;
       background: #ebf8ff;
       color: #2b6cb0;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
+
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th {
       text-align: left;
-      padding: 0.6rem 0.9rem;
+      padding: 9px 12px;
       font-size: 0.68rem;
       font-weight: 700;
       color: #718096;
@@ -311,43 +267,45 @@
       border-bottom: 2px solid #e2e8f0;
     }
     td {
-      padding: 0.7rem 0.9rem;
+      padding: 11px 12px;
       border-bottom: 1px solid #e2e8f0;
+      font-size: 0.87rem;
       vertical-align: middle;
-      font-size: 0.88rem;
     }
-    tr.clickable { cursor: pointer; }
-    tr.clickable:hover td { background: #f7fafc; }
+    tr.row-clickable { cursor: pointer; }
+    tr.row-clickable:hover td { background: #f7fafc; }
+
+    /* Expand detail row */
     tr.detail-row td { padding: 0; background: #fafafa; }
     .detail-inner {
-      padding: 1rem 1.5rem;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      padding: 14px 20px;
     }
     .detail-block {
       background: #fff;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      padding: 0.85rem;
+      padding: 12px;
     }
     .detail-block h4 {
-      margin: 0 0 0.4rem;
-      font-size: 0.78rem;
-      font-weight: 600;
+      margin: 0 0 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
       color: #4a5568;
     }
     .detail-block.strengths h4 { color: #276749; }
     .detail-block.gaps h4      { color: #c05621; }
-    .detail-block p { margin: 0; font-size: 0.85rem; line-height: 1.55; color: #2d3748; }
+    .detail-block p { margin: 0; font-size: 0.82rem; line-height: 1.6; color: #2d3748; }
 
-    /* ── Score badges ── */
+    /* Score badge */
     .score-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 38px;
-      padding: 0.2rem 0.5rem;
+      min-width: 36px;
+      padding: 3px 8px;
       border-radius: 9999px;
       font-weight: 700;
       font-size: 0.88rem;
@@ -355,107 +313,57 @@
     .score-high { background: #c6f6d5; color: #276749; }
     .score-mid  { background: #feebc8; color: #c05621; }
     .score-low  { background: #fed7d7; color: #c53030; }
-    .score-none { background: #edf2f7; color: #718096; }
+    .score-none { background: #edf2f7; color: #a0aec0; }
 
-    /* Status chip */
-    .status-chip {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.15rem 0.6rem;
-      border-radius: 9999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .status-pass { background: #c6f6d5; color: #276749; }
-    .status-fail { background: #fed7d7; color: #c53030; }
-
-    .link-view { color: #805ad5; text-decoration: none; font-weight: 500; font-size: 0.85rem; }
+    .name-sub { font-size: 0.75rem; color: #718096; margin-top: 1px; }
+    .link-view { color: #805ad5; text-decoration: none; font-weight: 500; font-size: 0.82rem; }
     .link-view:hover { text-decoration: underline; }
 
-    /* ── Spinner ── */
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { animation: spin 0.8s linear infinite; display: inline-block; }
+    .table-hint {
+      padding: 9px 12px;
+      font-size: 0.75rem;
+      color: #a0aec0;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 2px;
+    }
 
-    /* ── Airtable jobs bar ── */
-    .jobs-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-      padding: 0.75rem 1rem;
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-    }
-    .jobs-bar-label { font-size: 0.7rem; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.04em; margin-right: 0.25rem; white-space: nowrap; }
-    .job-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.2rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background .12s;
-      border: 1px solid #cbd5e0;
-      background: #edf2f7;
-      color: #4a5568;
-    }
-    .job-pill:hover, .job-pill.active { background: #805ad5; color: #fff; border-color: #805ad5; }
-    .jobs-bar-refresh { margin-left: auto; font-size: 0.78rem; color: #a0aec0; cursor: pointer; background: none; border: none; padding: 0; }
-    .jobs-bar-refresh:hover { color: #805ad5; }
+    /* Spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.8s linear infinite; display: inline-block; }
 
     [x-cloak] { display: none !important; }
   </style>
 </head>
 <body x-data="app()" x-cloak>
 
-  <!-- ── HEADER ──────────────────────────────────────────────────── -->
+  <!-- ── HEADER ── -->
   <header class="header">
-    <div class="header-left">
+    <div>
       <h1>&#129302; AI Recruitment System</h1>
       <p class="subtitle">Powered by GPT-4o-mini &middot; Manatal ATS &middot; Airtable</p>
     </div>
     <span class="live-badge" x-text="serverLive ? 'Live' : 'Offline'"></span>
   </header>
 
-  <!-- ── MAIN CONTAINER ──────────────────────────────────────────── -->
   <div class="container">
 
-    <!-- ── RUN FORM CARD ──────────────────────────────────────────── -->
+    <!-- ── RUN CARD ── -->
     <section class="card">
       <h2>Run AI Candidate Scoring</h2>
 
-      <!-- ORDER: Tier 2 Cutoff → Pipeline Stage → (skip options) → Job rows → + Add → Run -->
+      <!-- 1. TIER 2 CUTOFF + PIPELINE STAGE -->
       <div class="config-row">
-        <!-- Tier 2 Cutoff -->
         <div class="field field-cutoff">
           <label>Tier 2 Cutoff (%)</label>
-          <input type="number" min="0" max="100" x-model.number="config.passCutoff" placeholder="60 = default" />
+          <input type="number" min="0" max="100" x-model.number="passCutoff" placeholder="60 = default" />
         </div>
-        <!-- Pipeline Stage -->
         <div class="field field-stage">
           <label>Pipeline Stage</label>
-          <input type="text" x-model="config.stageName" placeholder="New Candidates" />
-        </div>
-        <!-- Skip options -->
-        <div class="skip-group">
-          <label class="skip-label">
-            <input type="checkbox" x-model="config.skipRubric" />
-            Skip rubric generation
-          </label>
-          <label class="skip-label">
-            <input type="checkbox" x-model="config.skipReports" />
-            Skip detailed reports
-          </label>
+          <input type="text" x-model="stageName" placeholder="New Candidates" />
         </div>
       </div>
 
-      <!-- Job rows -->
+      <!-- 2. JOB ID rows -->
       <div class="job-rows">
         <template x-for="(jid, i) in jobIds" :key="i">
           <div class="job-row">
@@ -477,10 +385,10 @@
         </template>
       </div>
 
-      <!-- + Add job -->
+      <!-- 3. + Add job -->
       <button class="btn-add" @click="addJob()">+ Add job</button>
 
-      <!-- Run -->
+      <!-- 4. Run AI Scoring -->
       <div>
         <button
           class="btn-run"
@@ -488,14 +396,14 @@
           :disabled="isRunning || jobIds.filter(j => j.trim()).length === 0"
         >
           <template x-if="!isRunning">
-            <span style="display:inline-flex;align-items:center;gap:6px;">
+            <span style="display:inline-flex;align-items:center;gap:6px">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               Run AI Scoring
             </span>
           </template>
           <template x-if="isRunning">
-            <span style="display:inline-flex;align-items:center;gap:8px;">
-              <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
+            <span style="display:inline-flex;align-items:center;gap:8px">
+              <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="16" height="16">
                 <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
                 <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
               </svg>
@@ -506,7 +414,7 @@
       </div>
     </section>
 
-    <!-- ── STATUS BAR ─────────────────────────────────────────────── -->
+    <!-- ── STATUS BAR ── -->
     <div
       class="status-bar"
       :class="statusType"
@@ -514,10 +422,10 @@
       x-text="statusMsg"
     ></div>
 
-    <!-- ── TERMINAL ───────────────────────────────────────────────── -->
+    <!-- ── TERMINAL ── -->
     <section class="card">
       <div class="terminal-label">Terminal</div>
-      <div class="terminal" id="terminal" x-ref="terminal">
+      <div class="terminal" x-ref="terminal">
         <template x-if="logs.length === 0">
           <span class="t-dim">No output yet. Run AI Scoring to see pipeline logs.</span>
         </template>
@@ -528,226 +436,161 @@
       </div>
     </section>
 
-    <!-- ── AIRTABLE JOB PILLS ─────────────────────────────────────── -->
-    <div class="jobs-bar" x-show="airtableJobs.length > 0">
-      <span class="jobs-bar-label">Jobs in Airtable</span>
-      <template x-for="job in airtableJobs" :key="job.job_id">
-        <button
-          class="job-pill"
-          :class="{ active: selectedJobId === String(job.job_id) }"
-          @click="viewJob(job.job_id)"
-          x-text="(job.job_name || ('Job ' + job.job_id))"
-        ></button>
-      </template>
-      <button class="jobs-bar-refresh" @click="loadJobs()" title="Refresh">&#8635; Refresh</button>
-    </div>
-
-    <!-- ── STATS ──────────────────────────────────────────────────── -->
-    <div class="stats-grid" x-show="stats.total > 0">
-      <div class="stat-card">
-        <div class="stat-label">Total Processed</div>
-        <div class="stat-value blue" x-text="stats.total"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Average Score</div>
-        <div class="stat-value purple" x-text="stats.avg"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Top Score</div>
-        <div class="stat-value green" x-text="stats.top"></div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Reports</div>
-        <div class="stat-value gray" x-text="stats.reports"></div>
-      </div>
-    </div>
-
-    <!-- ── CANDIDATE RESULTS ──────────────────────────────────────── -->
-    <section
-      class="card"
-      x-show="selectedJobId && (candidateMap[selectedJobId] || []).length > 0"
-    >
-      <div class="results-meta">
-        <h2>Candidate Results</h2>
-        <span class="meta-text" x-text="(candidateMap[selectedJobId] || []).length + ' candidates · sorted by score'"></span>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Candidate</th>
-              <th>Score</th>
-              <th>Status</th>
-              <th>CV</th>
-              <th>Report</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="(c, i) in (candidateMap[selectedJobId] || [])" :key="c.candidate_id">
-              <!-- Main row -->
-              <tr class="clickable" @click="toggleExpand(c.candidate_id)">
-                <td x-text="i + 1"></td>
-                <td>
-                  <strong x-text="c.full_name"></strong>
-                  <div style="font-size:.8rem;color:#718096;" x-text="c.email"></div>
-                </td>
-                <td>
-                  <span
-                    class="score-badge"
-                    :class="scoreCls(c.tier1_score)"
-                    x-text="c.tier1_score ?? '—'"
-                  ></span>
-                </td>
-                <td>
-                  <span
-                    class="status-chip"
-                    :class="c.tier1_status === 'PASS' ? 'status-pass' : 'status-fail'"
-                    x-text="c.tier1_status || '—'"
-                  ></span>
-                </td>
-                <td>
-                  <template x-if="c.cv_url">
-                    <a class="link-view" :href="c.cv_url" target="_blank" @click.stop>View</a>
-                  </template>
-                  <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
-                </td>
-                <td>
-                  <template x-if="c.report_url">
-                    <a class="link-view" :href="c.report_url" target="_blank" @click.stop>View report</a>
-                  </template>
-                  <template x-if="!c.report_url"><span style="color:#cbd5e0">—</span></template>
-                </td>
+    <!-- ── CANDIDATE RESULTS (Tier 1) ── -->
+    <template x-if="selectedJobId && (candidateMap[selectedJobId] || []).length > 0">
+      <section class="card">
+        <div class="results-header">
+          <h2>Candidate Results</h2>
+          <span class="meta-text" x-text="(candidateMap[selectedJobId] || []).length + ' candidates · sorted by score'"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Candidate</th>
+                <th>Current Role</th>
+                <th>Score</th>
+                <th>Stage</th>
+                <th>Resume</th>
               </tr>
-              <!-- Expanded detail row -->
-              <template x-if="expandedId === c.candidate_id">
-                <tr class="detail-row">
-                  <td colspan="6">
-                    <div class="detail-inner">
-                      <div class="detail-block">
-                        <h4>&#128214; Summary</h4>
-                        <p x-text="c.ai_summary || '—'"></p>
+            </thead>
+            <tbody>
+              <template x-for="(c, i) in (candidateMap[selectedJobId] || [])" :key="c.candidate_id">
+                <!-- Main row -->
+                <tr class="row-clickable" @click="toggleExpand(c.candidate_id)">
+                  <td x-text="i + 1"></td>
+                  <td>
+                    <strong x-text="c.full_name"></strong>
+                    <div class="name-sub" x-text="c.email"></div>
+                  </td>
+                  <td>
+                    <strong x-text="c.job_name || '—'"></strong>
+                    <div class="name-sub" x-text="c.org_name"></div>
+                  </td>
+                  <td>
+                    <span class="score-badge" :class="scoreCls(c.tier1_score)" x-text="c.tier1_score ?? '—'"></span>
+                  </td>
+                  <td x-text="c.match_stage_name || '—'"></td>
+                  <td>
+                    <template x-if="c.cv_url">
+                      <a class="link-view" :href="c.cv_url" target="_blank" @click.stop>View</a>
+                    </template>
+                    <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
+                  </td>
+                </tr>
+                <!-- Expanded detail -->
+                <template x-if="expandedId === c.candidate_id">
+                  <tr class="detail-row">
+                    <td colspan="6">
+                      <div class="detail-inner">
+                        <div class="detail-block">
+                          <h4>&#128214; Summary</h4>
+                          <p x-text="c.ai_summary || '—'"></p>
+                        </div>
+                        <div class="detail-block strengths">
+                          <h4>&#10003; Strengths</h4>
+                          <p x-text="c.ai_strengths || '—'"></p>
+                        </div>
+                        <div class="detail-block gaps">
+                          <h4>&#9888; Gaps</h4>
+                          <p x-text="c.ai_gaps || '—'"></p>
+                        </div>
                       </div>
-                      <div class="detail-block strengths">
-                        <h4>&#10003; Strengths</h4>
-                        <p x-text="c.ai_strengths || '—'"></p>
-                      </div>
-                      <div class="detail-block gaps">
-                        <h4>&#9888; Gaps</h4>
-                        <p x-text="c.ai_gaps || '—'"></p>
-                      </div>
-                    </div>
+                    </td>
+                  </tr>
+                </template>
+              </template>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-hint">&#128161; Click any row to expand AI summary, strengths, and gaps</div>
+      </section>
+    </template>
+
+    <!-- ── REPORT RESULTS (Tier 2) ── -->
+    <template x-if="reportCandidates.length > 0">
+      <section class="card">
+        <div class="results-header">
+          <h2>Report Results</h2>
+          <span class="badge-pill">High-scoring &amp; rescored</span>
+          <span class="meta-text" x-text="reportCandidates.length + ' candidates with reports'"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Candidate</th>
+                <th>Current Role</th>
+                <th>New Score</th>
+                <th>Stage</th>
+                <th>Resume</th>
+                <th>Report</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(c, i) in reportCandidates" :key="c.candidate_id">
+                <tr>
+                  <td x-text="i + 1"></td>
+                  <td>
+                    <strong x-text="c.full_name"></strong>
+                    <div class="name-sub" x-text="c.email"></div>
+                  </td>
+                  <td>
+                    <strong x-text="c.job_name || '—'"></strong>
+                    <div class="name-sub" x-text="c.org_name"></div>
+                  </td>
+                  <td>
+                    <span class="score-badge" :class="scoreCls(c.tier2_score ?? c.tier1_score)" x-text="c.tier2_score ?? c.tier1_score ?? '—'"></span>
+                  </td>
+                  <td x-text="c.match_stage_name || '—'"></td>
+                  <td>
+                    <template x-if="c.cv_url">
+                      <a class="link-view" :href="c.cv_url" target="_blank">View</a>
+                    </template>
+                    <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
+                  </td>
+                  <td>
+                    <template x-if="c.report_url">
+                      <a class="link-view" :href="c.report_url" target="_blank">View report</a>
+                    </template>
+                    <template x-if="!c.report_url"><span style="color:#cbd5e0">—</span></template>
                   </td>
                 </tr>
               </template>
-            </template>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ── REPORT RESULTS ─────────────────────────────────────────── -->
-    <section
-      class="card"
-      x-show="selectedJobId && reportCandidates.length > 0"
-    >
-      <div class="results-meta">
-        <h2>Report Results</h2>
-        <span class="badge-pill">High-scoring &amp; rescored</span>
-        <span class="meta-text" x-text="reportCandidates.length + ' candidates with reports'"></span>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Candidate</th>
-              <th>T1 Score</th>
-              <th>T2 Score</th>
-              <th>Status</th>
-              <th>CV</th>
-              <th>Report</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="(c, i) in reportCandidates" :key="c.candidate_id">
-              <tr>
-                <td x-text="i + 1"></td>
-                <td>
-                  <strong x-text="c.full_name"></strong>
-                  <div style="font-size:.8rem;color:#718096;" x-text="c.email"></div>
-                </td>
-                <td>
-                  <span class="score-badge" :class="scoreCls(c.tier1_score)" x-text="c.tier1_score ?? '—'"></span>
-                </td>
-                <td>
-                  <span class="score-badge" :class="scoreCls(c.tier2_score)" x-text="c.tier2_score ?? '—'"></span>
-                </td>
-                <td>
-                  <span
-                    class="status-chip"
-                    :class="(c.tier2_status || c.tier1_status) === 'PASS' ? 'status-pass' : 'status-fail'"
-                    x-text="c.tier2_status || c.tier1_status || '—'"
-                  ></span>
-                </td>
-                <td>
-                  <template x-if="c.cv_url">
-                    <a class="link-view" :href="c.cv_url" target="_blank">View</a>
-                  </template>
-                  <template x-if="!c.cv_url"><span style="color:#cbd5e0">—</span></template>
-                </td>
-                <td>
-                  <template x-if="c.report_url">
-                    <a class="link-view" :href="c.report_url" target="_blank">View report</a>
-                  </template>
-                  <template x-if="!c.report_url"><span style="color:#cbd5e0">—</span></template>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-    </section>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </template>
 
   </div><!-- /container -->
 
-  <!-- ── ALPINE APP ─────────────────────────────────────────────── -->
+  <!-- ── ALPINE APP ── -->
   <script>
     function app() {
       return {
         serverLive: false,
 
-        config: {
-          passCutoff: null,
-          stageName: 'New Candidates',
-          skipRubric: false,
-          skipReports: false,
-        },
-
+        // Form state
+        passCutoff: null,
+        stageName: 'New Candidates',
         jobIds: [''],
 
+        // Run state
         isRunning: false,
         runId: null,
         statusMsg: '',
         statusType: 'running',
 
+        // Logs
         logs: [],
-        expandedId: null,
 
-        airtableJobs: [],
+        // Results
         selectedJobId: null,
-        candidateMap: {},   // { job_id: candidates[] }
-
-        get stats() {
-          const list = this.candidateMap[this.selectedJobId] || [];
-          const scores = list.map(c => c.tier1_score).filter(s => s != null);
-          return {
-            total:   list.length,
-            avg:     scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0,
-            top:     scores.length ? Math.max(...scores) : 0,
-            reports: list.filter(c => c.report_url).length,
-          };
-        },
+        candidateMap: {},   // { job_id: [] }
+        expandedId: null,
 
         get reportCandidates() {
           return (this.candidateMap[this.selectedJobId] || []).filter(c => c.report_url);
@@ -755,25 +598,22 @@
 
         init() {
           fetch('/health').then(r => r.ok && (this.serverLive = true)).catch(() => {});
-          this.loadJobs();
         },
 
-        // ── Job management ───────────────────────────────────────────
-        addJob() {
-          this.jobIds.push('');
-        },
-        removeJob(i) {
-          if (this.jobIds.length > 1) this.jobIds.splice(i, 1);
-        },
+        // ── Job management ──
+        addJob()        { this.jobIds.push(''); },
+        removeJob(i)    { if (this.jobIds.length > 1) this.jobIds.splice(i, 1); },
 
-        // ── Pipeline run ─────────────────────────────────────────────
+        // ── Pipeline run ──
         async runPipeline() {
           const validIds = this.jobIds.map(j => j.trim()).filter(Boolean);
           if (!validIds.length || this.isRunning) return;
 
           this.isRunning = true;
           this.logs = [];
-          this.setStatus('Pipeline starting…', 'running');
+          this.selectedJobId = null;
+          this.candidateMap = {};
+          this.setStatus('Running AI scoring. Watch the terminal below.', 'running');
 
           try {
             const res = await fetch('/api/run', {
@@ -781,15 +621,14 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 job_ids:        validIds,
-                pass_threshold: this.config.passCutoff || 75,
-                stage_name:     this.config.stageName  || 'New Candidates',
-                skip_rubric:    this.config.skipRubric,
-                skip_reports:   this.config.skipReports,
+                pass_threshold: this.passCutoff  || 75,
+                stage_name:     this.stageName   || 'New Candidates',
+                skip_rubric:    false,
+                skip_reports:   false,
               }),
             });
             const data = await res.json();
             this.runId = data.run_id;
-            this.setStatus('Running AI scoring. Watch the terminal below.', 'running');
 
             const es = new EventSource(`/api/stream/${this.runId}`);
             es.onmessage = (evt) => {
@@ -803,8 +642,8 @@
                   ok ? 'success' : 'failed'
                 );
                 es.close();
+                // Load candidates for every job that was run
                 validIds.forEach(jid => this.loadCandidates(jid));
-                this.loadJobs();
                 return;
               }
               this.logs.push(msg);
@@ -830,28 +669,17 @@
           this.statusType = type;
         },
 
-        // ── Airtable data ─────────────────────────────────────────────
-        async loadJobs() {
-          try {
-            const r = await fetch('/api/jobs');
-            const d = await r.json();
-            this.airtableJobs = d.jobs || [];
-          } catch {}
-        },
-
-        async viewJob(jobId) {
-          this.selectedJobId = String(jobId);
-          await this.loadCandidates(jobId);
-        },
-
+        // ── Load candidates from Airtable ──
         async loadCandidates(jobId) {
           const jid = String(jobId);
+          // Show the first job's results
           if (!this.selectedJobId) this.selectedJobId = jid;
           try {
             const r = await fetch(`/api/candidates/${jid}`);
             const d = await r.json();
             this.candidateMap[jid] = d.candidates || [];
-            if (this.selectedJobId === jid && !this.selectedJobId) this.selectedJobId = jid;
+            // Trigger reactivity
+            this.candidateMap = { ...this.candidateMap };
           } catch {
             this.candidateMap[jid] = [];
           }
@@ -861,24 +689,23 @@
           this.expandedId = this.expandedId === id ? null : id;
         },
 
-        // ── Helpers ───────────────────────────────────────────────────
+        // ── Helpers ──
         lineClass(line) {
           if (!line) return 't-dim';
-          const l = line;
-          if (l.includes('======') || l.includes('[STEP ')) return 't-step';
-          if (l.includes('[OK]') || l.includes('completed successfully')) return 't-ok';
-          if (l.includes('[WARN]') || l.includes('[no resume]')) return 't-warn';
-          if (l.includes('[ERROR]') || l.includes('ERROR:')) return 't-err';
-          if (l.includes('[INFO]') || l.includes('Skipped (Airtable)') || l.includes('[force-rescore]')) return 't-info';
-          if (l.startsWith('  ') || l === '') return 't-dim';
+          if (line.includes('======') || line.includes('[STEP '))       return 't-step';
+          if (line.includes('[OK]')   || line.includes('completed successfully')) return 't-ok';
+          if (line.includes('[WARN]') || line.includes('[no resume]'))  return 't-warn';
+          if (line.includes('[ERROR]')|| line.includes('ERROR:'))       return 't-err';
+          if (line.includes('[INFO]') || line.includes('Skipped (Airtable)') || line.includes('[force-rescore]')) return 't-info';
+          if (line.startsWith('  ')   || line === '')                   return 't-dim';
           return '';
         },
 
         scoreCls(score) {
           if (score == null) return 'score-none';
-          const cut = this.config.passCutoff || 75;
-          if (score >= cut)         return 'score-high';
-          if (score >= cut * 0.7)   return 'score-mid';
+          const cut = this.passCutoff || 75;
+          if (score >= cut)       return 'score-high';
+          if (score >= cut * 0.7) return 'score-mid';
           return 'score-low';
         },
       };
