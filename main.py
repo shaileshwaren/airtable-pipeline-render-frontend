@@ -114,12 +114,14 @@ def _pipeline_thread(run_id: str, req: RunRequest) -> None:
     env["TARGET_STAGE_NAME"] = req.stage_name
     env["PASS_THRESHOLD"] = str(req.pass_threshold)
     env["MIN_SCORE_FOR_REPORT"] = str(req.pass_threshold)
-    # Ensure UTF-8 output on Windows
+    # Force line-by-line (unbuffered) output from all Python subprocesses
+    env["PYTHONUNBUFFERED"] = "1"
     env["PYTHONUTF8"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
 
     job_ids_str = ", ".join(req.job_ids)
-    cmd = [sys.executable, str(HERE / "online_pipeline.py"), job_ids_str]
+    # -u flag: run Python in unbuffered mode so each print() flushes immediately
+    cmd = [sys.executable, "-u", str(HERE / "online_pipeline.py"), job_ids_str]
     if req.skip_rubric:
         cmd.append("--skip-rubric")
     if req.skip_reports:
@@ -133,12 +135,18 @@ def _pipeline_thread(run_id: str, req: RunRequest) -> None:
             text=True,
             encoding="utf-8",
             errors="replace",
+            bufsize=1,          # line-buffered: flush after every newline
             env=env,
             cwd=str(HERE),
         )
         runs[run_id]["process"] = proc
 
-        for line in proc.stdout:
+        # readline() reads one line at a time as soon as it arrives,
+        # unlike iterating proc.stdout which can internally buffer reads
+        while True:
+            line = proc.stdout.readline()
+            if not line:
+                break
             q.put(line.rstrip())
 
         proc.wait()
