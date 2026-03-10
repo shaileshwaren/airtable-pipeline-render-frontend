@@ -566,7 +566,7 @@
         serverLive: false,
 
         // Form state
-        passCutoff: 60,
+        passCutoff: null,
         stageName: 'New Candidates',
         jobIds: [''],
 
@@ -588,8 +588,13 @@
           return (this.candidateMap[this.selectedJobId] || []).filter(c => c.report_url);
         },
 
-        init() {
+        async init() {
           fetch('/health').then(r => r.ok && (this.serverLive = true)).catch(() => {});
+          // Pre-fill cutoff from server .env default; user can still override it
+          try {
+            const d = await fetch('/api/defaults').then(r => r.json());
+            if (d.pass_threshold != null) this.passCutoff = d.pass_threshold;
+          } catch (_) {}
         },
 
         // ── Job management ──

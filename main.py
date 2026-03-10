@@ -50,9 +50,12 @@ app.add_middleware(
 runs: Dict[str, Dict[str, Any]] = {}
 
 
+_DEFAULT_THRESHOLD = int(os.getenv("PASS_THRESHOLD", "60"))
+
+
 class RunRequest(BaseModel):
     job_ids: List[str]
-    pass_threshold: int = 60
+    pass_threshold: int = _DEFAULT_THRESHOLD
     stage_name: str = "New Candidates"
     skip_rubric: bool = False
     skip_reports: bool = False
@@ -112,8 +115,7 @@ def _pipeline_thread(run_id: str, req: RunRequest) -> None:
 
     env = {**os.environ}
     env["TARGET_STAGE_NAME"] = req.stage_name
-    env["PASS_THRESHOLD"] = str(req.pass_threshold)
-    env["MIN_SCORE_FOR_REPORT"] = str(req.pass_threshold)
+    env["PASS_THRESHOLD"] = str(req.pass_threshold)   # config.py reads this; MIN_SCORE_FOR_REPORT is an alias
     # Force line-by-line (unbuffered) output from all Python subprocesses
     env["PYTHONUNBUFFERED"] = "1"
     env["PYTHONUTF8"] = "1"
@@ -167,6 +169,12 @@ def _pipeline_thread(run_id: str, req: RunRequest) -> None:
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/api/defaults")
+def get_defaults():
+    """Return server-side defaults so the UI can pre-fill fields from .env."""
+    return {"pass_threshold": _DEFAULT_THRESHOLD}
 
 
 @app.post("/api/run")
