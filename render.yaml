@@ -15,12 +15,10 @@ services:
         sync: false
       - key: AIRTABLE_CANDIDATE_TABLE_ID
         sync: false
-      - key: AIRTABLE_RUBRIC_TABLE_ID
-        sync: false
       - key: AIRTABLE_JOB_TABLE_ID
         value: tblCV6w4fGex9VgzK
       - key: PASS_THRESHOLD
-        value: "75"
+        value: "60"
       - key: TARGET_STAGE_NAME
         value: "New Candidates"
       - key: TARGET_STAGE_AFTER

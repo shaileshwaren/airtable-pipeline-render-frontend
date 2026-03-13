@@ -40,7 +40,6 @@ class Config:
     # =========================
     AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID", "app285aKVVr7JYL43").strip()
     AIRTABLE_TABLE_ID = os.getenv("AIRTABLE_CANDIDATE_TABLE_ID", "tblJ2OkvaWI7vi0vI").strip()
-    AIRTABLE_RUBRIC_TABLE_ID = os.getenv("AIRTABLE_RUBRIC_TABLE_ID", "tblZgr3F6DWEOorG7").strip()
     AIRTABLE_JOB_TABLE_ID = os.getenv("AIRTABLE_JOB_TABLE_ID", "tblCV6w4fGex9VgzK").strip()
 
     # Airtable field names

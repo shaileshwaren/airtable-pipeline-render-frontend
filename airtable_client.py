@@ -360,21 +360,21 @@ class AirtableClient:
             return records[0]["id"] if records else ""
 
     # ------------------------------------------------------------------
-    # Rubric helpers (Rubric table)
+    # Rubric helpers (stored directly on the Job table)
     # ------------------------------------------------------------------
 
     def get_rubric(self, job_id: str) -> Optional[Dict[str, Any]]:
-        """Fetch the rubric JSON for a job from the Rubric table.
+        """Fetch the rubric JSON for a job from the Job table.
 
-        Looks up by the numeric job_id field.
+        Looks up by the singleLineText job_id field.
         """
         client = AirtableClient(
             token=self.token,
             base_id=self.base_id,
-            table_id=Config.AIRTABLE_RUBRIC_TABLE_ID,
+            table_id=Config.AIRTABLE_JOB_TABLE_ID,
         )
-        # job_id is a numeric field — no quotes in formula
-        records = client.get_records_by_formula(f"{{job_id}}={job_id}")
+        # job_id is singleLineText in Job table — needs quotes in formula
+        records = client.get_records_by_formula(f'{{job_id}}="{job_id}"')
         if not records:
             return None
         raw = records[0]["fields"].get("rubric_json", "")
@@ -386,39 +386,34 @@ class AirtableClient:
             return None
 
     def delete_rubric(self, job_id: str) -> bool:
-        """Delete the rubric record for a job from the Rubric table.
+        """Clear the rubric fields on the Job record for a given job_id.
 
-        Returns True if a record was deleted, False if none existed.
+        Returns True if a Job record was found and cleared, False otherwise.
         """
         client = AirtableClient(
             token=self.token,
             base_id=self.base_id,
-            table_id=Config.AIRTABLE_RUBRIC_TABLE_ID,
+            table_id=Config.AIRTABLE_JOB_TABLE_ID,
         )
-        records = client.get_records_by_formula(f"{{job_id}}={job_id}")
+        records = client.get_records_by_formula(f'{{job_id}}="{job_id}"')
         if not records:
             return False
-        for rec in records:
-            r = requests.delete(
-                client._url(f"{Config.AIRTABLE_RUBRIC_TABLE_ID}/{rec['id']}"),
-                headers=client._headers(),
-                timeout=30,
-            )
-            if not r.ok:
-                print(f"[WARN] Failed to delete rubric record {rec['id']}: {r.status_code}")
+        record_id = records[0]["id"]
+        client.update_record(record_id, {"rubric_json": "", "rubric_name": ""})
         return True
 
     def upsert_rubric(self, job_id: str, rubric: Dict[str, Any]) -> None:
-        """Upsert a rubric into the Rubric table (keyed by numeric job_id field).
+        """Write rubric_json and rubric_name directly onto the Job record.
 
         rubric_name is set to RoleName_YYYYMMDD (e.g. SeniorMSDynamicsCRMDeveloper_20260309).
+        If no Job record exists for this job_id, a minimal one is created.
         """
         from datetime import date
 
         client = AirtableClient(
             token=self.token,
             base_id=self.base_id,
-            table_id=Config.AIRTABLE_RUBRIC_TABLE_ID,
+            table_id=Config.AIRTABLE_JOB_TABLE_ID,
         )
 
         # Build rubric_name from role + today's date
@@ -426,22 +421,16 @@ class AirtableClient:
         role_slug = "".join(w.capitalize() for w in role_raw.split())
         rubric_name = f"{role_slug}_{date.today().strftime('%Y%m%d')}"
 
-        # Look up existing record by numeric job_id field
-        records = client.get_records_by_formula(f"{{job_id}}={job_id}")
-        existing_id = records[0]["id"] if records else None
-
-        # Resolve Job record ID for the link field
-        job_record_id = self.get_job_record_id(job_id)
-
         payload: Dict[str, Any] = {
-            "job_id":      int(job_id),
             "rubric_name": rubric_name,
             "rubric_json": json.dumps(rubric, ensure_ascii=False),
         }
-        if job_record_id:
-            payload["job"] = [job_record_id]
 
-        if existing_id:
-            client.update_record(existing_id, payload)
+        # Find existing Job record by singleLineText job_id field
+        records = client.get_records_by_formula(f'{{job_id}}="{job_id}"')
+        if records:
+            client.update_record(records[0]["id"], payload)
         else:
+            # No Job record yet — create a minimal one
+            payload["job_id"] = str(job_id)
             client.batch_create([payload])
