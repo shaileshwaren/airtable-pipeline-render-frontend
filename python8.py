@@ -745,7 +745,6 @@ def main() -> int:
             print(f"Scored: {current_num}/{total_in_stage}. {full_name} (ID: {candidate_id}) -> Tier1: {tier1_score}{no_resume_flag}")
 
         tier1_score = int(score.get("tier1_score", score.get("ai_score", 0)))
-        tier1_status = "PASS" if tier1_score >= Config.MIN_SCORE_FOR_REPORT else "FAIL"
 
         rows.append({
             "organisation_id": org_id,
@@ -763,7 +762,6 @@ def main() -> int:
             "resume_local_path": resume_local_path,
             "cv_text":      clip(resume_text, Config.MAX_RESUME_CHARS) if resume_text else "No resume attached.",
             "tier1_score":  tier1_score,
-            "tier1_status": tier1_status,
             "ai_score":     tier1_score,
             "ai_summary":   score.get("ai_summary", ""),
             "ai_strengths": score.get("ai_strengths", ""),
@@ -787,7 +785,7 @@ def main() -> int:
         "candidate_id", "full_name", "email",
         "resume_file", "resume_local_path",
         "cv_text",
-        "tier1_score", "tier1_status",
+        "tier1_score",
         "ai_score", "ai_summary", "ai_strengths", "ai_gaps", "ai_report_html",
         "rubric_version", "rubric_hash", "cache_key",
     ]
