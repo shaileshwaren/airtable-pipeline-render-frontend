@@ -13,7 +13,7 @@ services:
         sync: false
       - key: AIRTABLE_BASE_ID
         sync: false
-      - key: AIRTABLE_TABLE_ID
+      - key: AIRTABLE_CANDIDATE_TABLE_ID
         sync: false
       - key: AIRTABLE_RUBRIC_TABLE_ID
         sync: false

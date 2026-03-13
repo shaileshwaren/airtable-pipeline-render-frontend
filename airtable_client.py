@@ -38,7 +38,7 @@ class AirtableClient:
             )
 
         if not self.base_id or not self.table_id:
-            raise ValueError("AIRTABLE_BASE_ID and AIRTABLE_TABLE_ID must be set")
+            raise ValueError("AIRTABLE_BASE_ID and AIRTABLE_CANDIDATE_TABLE_ID must be set")
 
     def _headers(self) -> Dict[str, str]:
         return {
@@ -60,7 +60,7 @@ class AirtableClient:
         raise RuntimeError(
             f"Airtable preflight check failed: {r.status_code}\n"
             f"Response: {r.text}\n"
-            f"Check your AIRTABLE_TOKEN, AIRTABLE_BASE_ID, and AIRTABLE_TABLE_ID"
+            f"Check your AIRTABLE_TOKEN, AIRTABLE_BASE_ID, and AIRTABLE_CANDIDATE_TABLE_ID"
         )
 
     def get_all_records_by_key(self, key_field: str) -> Dict[str, str]:

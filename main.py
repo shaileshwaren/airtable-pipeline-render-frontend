@@ -266,9 +266,9 @@ def cancel_run(run_id: str):
 # ─────────────────────────────────────────────────────────────────────────────
 @app.get("/api/candidates/{job_id}")
 def get_candidates(job_id: str):
-    table_id = os.getenv("AIRTABLE_TABLE_ID", "")
+    table_id = os.getenv("AIRTABLE_CANDIDATE_TABLE_ID", "")
     if not table_id:
-        raise HTTPException(status_code=500, detail="AIRTABLE_TABLE_ID not configured")
+        raise HTTPException(status_code=500, detail="AIRTABLE_CANDIDATE_TABLE_ID not configured")
 
     records = _at_get_records(table_id, f"{{job_id}}={job_id}")
 
